@@ -1,0 +1,20 @@
+READ ALL THE WAY THROUGH BEFORE FOLLOWING
+
+Run the file "octave-7.1.0-w64-installer" in order to install the open-source MATLAB clone Octave. Octave is the platform that POSSM runs on.
+
+Once octave is installed, open the file named "POSSM.m", this will open the source code for POSSM.
+
+from here, POSSM's script can be run from either the Octave editor, by clicking the gear-with-yellow-triangle icon near the top of the editor,
+or by typing "POSSM" without quotes into the Command Window (accessible by the tabs near the bottom of the window.
+
+WARNING: running POSSM from the editor with the gear-with-yellow-triangle icon will SAVE ANY CHANGES YOU HAVE MADE TO THE CODE, intentionally or not. 
+If this is how you would prefer to run POSSM, it is recommended you make a backup of the original file (from inside the "POSSM files" folder),
+and edit the name to "POSSM_backup.m". Currently, the source code is set to "read only", so this should not be an issue, but caution is advised.
+
+If you wish to make changes to the source code, you will have to, in the "POSSM files" folder, right click the POSSM version file and then
+and uncheck the "read only" box.
+
+If you decide to move your POSSM folder, you will have to change the address of the shortcut in the POSSM folder, which currently directs to
+\\ascend.egs.anl.gov\groups\tribology\STUDENT folders\POSSM\POSSM files\POSSM_v1.0.0.m
+
+if you decided to make a new shortcut instead there is an icon in the POSSM files folder named POSSM.ico that you can use.
