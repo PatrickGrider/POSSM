@@ -1141,7 +1141,7 @@ case "run"
     list = fullfile(inLoc,readdir(inLoc))
     A = cell(length(list),length(extensions));
     for i = 1:length(extensions)
-      A(:,i) = strfind(list,extensions{i});;
+      A(:,i) = strfind(lower(list),extensions{i});;
     endfor
     indx = find(~cellfun(@isempty,A));
     indx = rem(indx,length(list));
