@@ -11,7 +11,8 @@ PREPARING PRESSURE-FILM IMAGES FOR USE WITH POSSM
 --------------------------------------------------
 Note: Preparing PfIs for POSSM is easiest to do if your PfIs have some sort of registration mark on them, a spot where the film has experienced maximum pressure for maximum color saturation. 
 
-PROCESSING GRAYSCALE PFIS
+PROCESSING GRAYSCALE PfIs
+-------------------------
 POSSM works best with black and white images. You can prepare your PfI for POSSM by editing it in a photo-editing software, such as krita or GIMP (both free and open source). POSSM works under the assumption that when it sees a black and white image, white value 255 is a zero pressure location and black value 0 is a maximum pressure location. 
 
 1) Desaturate your PfI using your photo-editing software.
@@ -20,7 +21,8 @@ POSSM works best with black and white images. You can prepare your PfI for POSSM
 4) After loading your image into POSSM, be sure to click "grayscale" so that POSSM can flatten your image from RGB colorspace into grayscale. this may not always be necescary, but is a good precaution to take.
 
 
-DECOLORIZING COLOR PFIS
+DECOLORIZING COLOR PfIs
+-----------------------
 POSSM can process color images without them being edited, but it is less precise than editing them yourself. POSSM will assume that, after taking a histogram of your PfI, that the color value with the most counts should be interpreted as 255 white, and the color value with the most intense saturation should be interpreted as 0 black. This means that color PfIs you would like POSSM to process must fit some specific criteria:
 
 1) PfI must be cropped such that the edges of the pressure-film are not visible
