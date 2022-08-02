@@ -1013,7 +1013,7 @@ case "menu";
     subplot(subplotB);
     C = ["batchSubPlot_",num2str(tagNum)];
     base.(C).type = "surfaceMap";
-    eval(["surfmap_",num2str(tagNum)," = surf(1:columns(imvalues),\
+    eval(["surfmap_",num2str(tagNum)," = surf(columns(imvalues):-1:1,\
     1:rows(imvalues),imvalues,""linestyle"",""none"");"])
 
     eval(["setappdata(displayspace, ""base"", base, \
@@ -1141,18 +1141,20 @@ case "run"
     list = fullfile(inLoc,readdir(inLoc))
     A = cell(length(list),length(extensions));
     for i = 1:length(extensions)
-      A(:,i) = strfind(lower(list),extensions{i});;
+      A(:,i) = strfind(lower(list),extensions{i});
     endfor
     indx = find(~cellfun(@isempty,A));
     indx = rem(indx,length(list));
     indx(indx == 0) = length(list);
     files = cell(length(indx),1);
     files(1:end) = list(indx(1:end))
-    h = waitbar (0, '0.00#');
+    h = waitbar (0, 'processing...');
+    timeElapsed = zeros(length(files));
+    outside = tic()
     for ii = 1:length(files)
-      waitbar (ii/(length(files)), h, sprintf('%.2f%%', (100*ii/(length(files)))));
+      inside = tic()
       [dir,name,ext] = fileparts(files{ii});
-
+      waitbar (ii/(length(files)), h, [num2str(ii),"/",num2str(length(files)),"\n Processing: ",name,ext,]);
       tempFigure = figure("filename", name,
       "visible", "off",
       "NumberTitle","off",
@@ -1236,7 +1238,7 @@ case "run"
               whitespace = double(((sum(sum(imvalues == 0)))/...
               (size(imvalues,1)*size(imvalues,2)))*100);
 
-              whitetext = text(0.5,1.1,[num2str(whitespace),"% white space"],
+              whitetext = text(0.5,1.1,[sprintf("%.1f", whitespace),"% white space"],
               "horizontalalignment","center",
               "units","normalized",
               "color",[0,0,0]);
@@ -1284,7 +1286,7 @@ case "run"
             disp(["output ",num2str(ii),
             " subplot",num2str(iii),", type: surfacemap"]);
 
-            col = 1:columns(imvalues);
+            col = columns(imvalues):-1:1;
             row = 1:rows(imvalues);
 
             surf(col,row,imvalues, "linestyle","none");
@@ -1312,9 +1314,26 @@ case "run"
       endif
       delete(tempFigure)
       disp("tempFigure deleted")
-
+      timeElapsed(ii) = toc(inside);
     endfor
+    doubleCheckTiming = toc(outside)
     delete(h)
+    [minval, minID] = min(timeElapsed);
+    [~,minName,minExt] = fileparts(files{minID})
+    [maxval, maxID] = max(timeElapsed);
+    [~,maxName,maxExt] = fileparts(files{maxID})
+    statsBox = msgbox(["Number of files processed: ",num2str(length(files)),"\n\
+\n\
+Total time elapsed (inside for): ",sprintf("%.1f",sum(timeElapsed))," seconds \n\
+\n\
+Total time elapsed (outside for): ",sprintf("%.1f",doubleCheckTiming)," seconds \n\
+\n\
+average time per file: ",sprintf("%.1f",mean(timeElapsed))," seconds \n\
+\n\
+shortest time and file: ", sprintf("%.1f",minval)," seconds; ", minName, minExt,"\n\
+\n\
+longest time and file: ", sprintf("%.1f",maxval)," seconds; ", maxName, maxExt,])
+
   endif
 
   if expimg == 1
@@ -1344,7 +1363,7 @@ base.(C).batchWhitespace = v;
 setappdata(displayspace,"base",base);
 switch v
   case 1
-    whitetext = text(0.5,1.1,[num2str(whitespace),"% white space"],"horizontalalignment","center","units","normalized","color",[0,0,0])
+    whitetext = text(0.5,1.1,[sprintf("%.1f", whitespace),"% white space"],"horizontalalignment","center","units","normalized","color",[0,0,0])
     setappdata(displayspace,"whitetext",whitetext)
   case 0
     if isappdata(displayspace, "whitetext") == 1
@@ -1486,7 +1505,7 @@ DECOLORIZE: click ""decolorize if you have uploaded a color image to POSSM.\n\
 POSSM can only analyze black and white images, and your pressure-film images\n\
 are likely in color. POSSM is designed to analyze 2 dimensional grayscale matrices of \n\
 values from 0 to 255, each matrix value representing one image pixel. Standard \n\
-color images are typically saved as RGB matrices, 3 dimentional matrices of \n\
+color images are typically saved as RGB matrices, 3 dimensional matrices of \n\
 values 0 to 255. They can also be thought of as three matrices stacked on top of \n\
 one another, each the size of the image; one matrix representing Red values, \n\
 another representing Green, and the last representing Blue, e.g. \n\
@@ -1540,5 +1559,4 @@ set(helptext1, "string", " ")
 set(helptext2, "string", " ")
 endswitch
   endfunction
-
 
