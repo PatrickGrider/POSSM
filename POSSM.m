@@ -257,9 +257,12 @@ function plot_number(calledBy, data);
   "batchSkip", 1);
 
   switch tag;                                                                   #tag refers to number of subplots to be generated.
+## This section could be trimmed down significantly by
+## merging all the generations and using just one 
+## for loop
 
+##if there is only one subplot:
   case "1"
-    disp("radiobutton 1 clicked")                                               #debugging
     delete(children);
     delete(allSubplots);
     numplot = 1;
@@ -303,8 +306,8 @@ function plot_number(calledBy, data);
     "cbar_1", cbar_1,
     "numplot", 1);
 
+##If there are 2 subplots:
   case "2"
-    disp("radiobutton 2 clicked")                                               #debugging
     delete(children)
     delete(allSubplots)
     subplot_2 = subplot(1,2,2,"parent",displayspace);
@@ -331,13 +334,8 @@ function plot_number(calledBy, data);
       ""title"", [""panel "", num2str(ii)],                              \
       ""position"", [0, 1-(0.2*ii), 1, 0.2]);"]);
 
-
-      disp(["subcontrol_",num2str(ii)," generated"])                            #debugging
-
       eval(["setappdata(displayspace, [""subcontrol_"", num2str(ii)],\
       ",      ["subcontrol_", num2str(ii)],", ""numplot"", 2);"]);
-
-      disp(["subcontrol_",num2str(ii)," set to appdata"])                       #debugging
 
       a = getappdata(displayspace, ["subcontrol_", num2str(ii)]);
       setappdata(displayspace, ["subcontrol_", num2str(ii)], a);
@@ -367,8 +365,8 @@ function plot_number(calledBy, data);
       endif
     endfor
 
+##If there are 3 subplots:
   case "3"
-    disp("radiobutton 3 clicked")                                               #debugging
     delete(children)
     delete(allSubplots)
     subplot_2 = subplot(2,2,2,"parent",displayspace);
@@ -394,12 +392,8 @@ function plot_number(calledBy, data);
       ""title"", [""panel "", num2str(ii)],                              \
       ""position"", [0, 1-(0.2*ii), 1, 0.2]);"]);
 
-      disp(["subcontrol_",num2str(ii)," generated"])                            #debugging
-
       eval(["setappdata(displayspace, [""subcontrol_"", num2str(ii)],\
       ",["subcontrol_", num2str(ii)],", ""numplot"", 3);"])
-
-      disp(["subcontrol_",num2str(ii)," set to appdata"])                       #debugging
 
       a = getappdata(displayspace, ["subcontrol_", num2str(ii)]);
       setappdata(displayspace, ["subcontrol_", num2str(ii)], a);
@@ -428,8 +422,8 @@ function plot_number(calledBy, data);
 
       endif
     endfor
+##if there are 4 subplots:
   case "4"
-    disp("radiobutton 4 clicked")                                               #debugging
     delete(children)
     delete(allSubplots)
     subplot_2 = subplot(2,2,2,"parent",displayspace);
@@ -457,12 +451,8 @@ function plot_number(calledBy, data);
       ""title"", [""panel "", num2str(ii)], \
       ""position"", [0, 1-(0.2*ii), 1, 0.2]);"]);
 
-      disp(["subcontrol_",num2str(ii)," generated"])                            #debugging
-
       eval(["setappdata(displayspace, [""subcontrol_"", num2str(ii)],\
       ",["subcontrol_", num2str(ii)],", ""numplot"", 4);"])
-
-      disp(["subcontrol_",num2str(ii)," set to appdata"])                       #debugging
 
       a = getappdata(displayspace, ["subcontrol_", num2str(ii)]);
       if ii > 1
@@ -498,7 +488,7 @@ if numplot < 4
   endfor
 endif
 
-
+#populate the fifth ui subpanel, which is present regardless of number of subplots
 subcontrol_5 = uipanel("parent", toolPanel, "position", [0, 0, 1, 0.2]);
 
 colormaptitle = uicontrol(subcontrol_5, "style", "text",
@@ -576,6 +566,8 @@ setappdata(displayspace,
 "exportTable", exportTable,
 "batchProcess", batchProcess);
 
+##this if/else could be slimmed down by creating the uicontrols and then using
+##the if/else statement to set(uicontrol, "differentParameter", different value)
 if tag == "1"                                                                   #if there is only one subplot, the UI changes somewhat.
   loadimage = uicontrol("parent", subcontrol_1 ,
   "callback", @process,
@@ -604,7 +596,7 @@ if tag == "1"                                                                   
   "position", [0.7,11/20,0.25,0.15]);
 
   pressureType = uicontrol("parent", subcontrol_1,
-  "tag", "pressure",
+  "tag", "units",
   "style", "popupmenu",
   "string", {"psi","kPa"},
   "callback", @process,
@@ -655,7 +647,7 @@ else
   "position", [0.7,0.1,0.25,0.3]);
 
   pressureType = uicontrol("parent", subcontrol_1,
-  "tag", "pressure",
+  "tag", "units",
   "style", "popupmenu",
   "string", {"psi","kPa"},
   "callback", @process,
@@ -699,12 +691,12 @@ endif
 endfunction
 
 function process(calledBy, data);                                               #function that processes the image. most UI controlls call this function.
-displayspace = findobj("tag","displayspace")
-controlFig = findobj("tag","controlFig")
+displayspace = findobj("tag","displayspace");
+controlFig = findobj("tag","controlFig");
 tag = get(calledBy, "tag");
 toolPanel = getappdata(displayspace,"toolPanel");
-children = get(toolPanel, "children")
-allSubplots = get(displayspace, "children")
+children = get(toolPanel, "children");
+allSubplots = get(displayspace, "children");
 base = getappdata(displayspace, "base");
 subplot_1 = getappdata(displayspace, "subplot_1");
 
@@ -714,67 +706,64 @@ case "load"
   subplot(subplot_1);
   [fname, fpath, fltidx] = uigetfile();
   ffpath = strcat(fpath, fname);
-  setappdata(displayspace, "fname",fname, "fpath",fpath)
   img = imread(ffpath);
   base.batchImage = img;
-  setappdata(displayspace, "image", img, "base", base);
-  subplot_1 = getappdata(displayspace, "subplot_1");
-  subplot(subplot_1)
-  imshow(img)
+  setappdata(displayspace,"fname",fname, "fpath",fpath, "image", img, "base", base);
+  imshow(img);
   base.batchSubPlot_1.type = "image";
 
+## defines the name of the film used, and together with the "units" parameter
+## determines the minimum and maximum pressure values
 case "film"
   f = get(calledBy, "value")
   switch f
     case 1,
-      film = [28 85.0]
+      film = [28 85.0];
       setappdata(displayspace, "film", film);
       base.batchSettings.batchFilmtype = film;
     case 2,
-      film = [7.25 29.0]
+      film = [7.25 29.0];
       setappdata(displayspace, "film", film);
       base.batchSettings.batchFilmtype = film;
     case 3,
-      film = [0.87 7.25]
+      film = [0.87 7.25];
       setappdata(displayspace, "film", film);
       base.batchSettings.batchFilmtype = film;
     case 4
-      cstr = inputdlg ({"Input pressure max (film saturation pressure)","Input pressure min (default 0)"}, "Experimentally gathered film values", [1,1], {0,0});
-      film = [str2double(cstr(2)) str2double(cstr(1))]
+      cstr = inputdlg ({"Input pressure max (film saturation pressure)","Input pressure min (default 0)"}, "Experimentally gathered film values in psi", [1,1], {0,0});
+      film = [str2double(cstr(2)) str2double(cstr(1))];
       setappdata(displayspace, "film", film);
       base.batchSettings.batchFilmtype = film;
   endswitch
 
+  film = getappdata(displayspace, "film");
+  mult = getappdata(displayspace, "mult");
 
-  film = getappdata(displayspace, "film")
-  mult = getappdata(displayspace, "mult")
-
-  disp("pressure about to be set:")
-  pressure = film*mult
+  pressure = film*mult;
   base.batchSettings.batchPressure = pressure;
   setappdata(displayspace,"base",base,"pressure",pressure);
 
-case "pressure"
-  p = get(calledBy, "value")
-  disp(p)
+## Determines the output units and, alongside the film type, the min and max pressure.
+case "units"
+  p = get(calledBy, "value");
   if p == 1
-    mult = 1
+    mult = 1;
     setappdata(displayspace, "mult", mult, "genUnits", "psi");
     base.batchSettings.batchUnits = "psi";
   elseif p == 2
-    mult = 6.89
+    mult = 6.89;
     setappdata(displayspace, "mult", mult, "genUnits", "kPa");
     base.batchSettings.batchUnits = "kPa";
   endif
 
-  film = getappdata(displayspace, "film")
+  film = getappdata(displayspace, "film");
   base.batchSettings.batchFilmtype = film;
-  mult = getappdata(displayspace, "mult")
-  disp("pressure about to be set:")
-  pressure = film*mult
+  mult = getappdata(displayspace, "mult");
+  pressure = film*mult;
   base.batchSettings.batchPressure = pressure;
   setappdata(displayspace, "pressure", pressure, "base", base);
 
+##Downsample the image. vital for large images.
 case "down"
   subplot(subplot_1);
   v = inputdlg("what rate would you like to downsample your image by? \n Entering 1 will save every pixel of your image, \n entering 2 will save every 2nd pixel, \n entering 3 will save every 3rd, etc.");
@@ -858,7 +847,6 @@ case "map"
     "lines",
     "prism",
     "white"}
-    disp(list{m})
     cmap = colormap(list{m});
     base.batchSettings.batchColormap = cmap;
     setappdata(displayspace,"cmap", cmap), "base", base;
@@ -880,22 +868,21 @@ endswitch
 
 tag = get(calledBy, "tag");
 displayspace = getappdata(displayspace, "displayspace");
-tagName = strtrunc(tag,4)
+tagName = strtrunc(tag,4);
 if length(tag) == 6
-tagNum =  str2num(tag(6))                                                       #tagNum gives which subplot is calling the function
-setappdata (displayspace,"tagNum", tagNum)
+tagNum =  str2num(tag(6));                                                       #tagNum gives which subplot is calling the function
+setappdata (displayspace,"tagNum", tagNum);
 endif
 img = getappdata(displayspace, "image");
 
-numplot = getappdata(displayspace, "numplot")
+numplot = getappdata(displayspace, "numplot");
 
-switch tagName;                                                                 #tagName can
+switch tagName;
 case "menu";
-  menuNum = get(calledBy, "value")
-  tagNum
-  numplot = getappdata(displayspace, "numplot")
-  subplotB = getappdata(displayspace, ["subplot_",num2str(tagNum)])
-  delete(subplotB)
+  menuNum = get(calledBy, "value");
+  numplot = getappdata(displayspace, "numplot");
+  subplotB = getappdata(displayspace, ["subplot_",num2str(tagNum)]);
+  delete(subplotB);
   if numplot == 1
     subplotB = subplot(1,1,1,"parent",displayspace);
   elseif numplot == 2
@@ -906,7 +893,7 @@ case "menu";
   setappdata(displayspace,["subplot_",num2str(tagNum)],subplotB)
 
   img = getappdata(displayspace, "image");
-  pressure = getappdata(displayspace, "pressure")
+  pressure = getappdata(displayspace, "pressure");
   range = [0,linspace(pressure(1),pressure(2),255)];
   imvalues = range((imcomplement(img))+1);
   setappdata(displayspace,"imvalues",imvalues);
@@ -936,7 +923,7 @@ case "menu";
 
 
   case 2;
-    if isappdata(displayspace,["whitespacebox_",num2str(tagNum)])
+    if isappdata(displayspace,["whitespacebox_",num2str(tagNum)]);
       whitespacebox = getappdata(displayspace,["whitespacebox_",num2str(tagNum)]);
       rmappdata(displayspace,["whitespacebox_",num2str(tagNum)]);
       delete(whitespacebox);
@@ -961,11 +948,11 @@ case "menu";
     C = ["batchSubPlot_",num2str(tagNum)];
     base.(C).type = "histogram";
     eval(["I_",num2str(tagNum)," = bar(xTrunc,countsTrunc,""histc"",\
-    ""linestyle"",""none"",""facecolor"",[0 0 0]);"])
+    ""linestyle"",""none"",""facecolor"",[0 0 0]);"]);
     set(subplotB,"xlabel",units,"ylabel","instances","xlim", [0, pressure(2) + 1]);
     setappdata(displayspace,"base",base);
   case 3;
-    if isappdata(displayspace,["whitespacebox_",num2str(tagNum)])
+    if isappdata(displayspace,["whitespacebox_",num2str(tagNum)]);
       whitespacebox = getappdata(displayspace,["whitespacebox_",num2str(tagNum)]);
       rmappdata(displayspace,["whitespacebox_",num2str(tagNum)]);
       delete(whitespacebox);
@@ -978,7 +965,7 @@ case "menu";
 
     subplotA = getappdata(displayspace, ["subplot_",num2str(tagNum)]);
     subplot(subplotA);
-    set(subplotA, "xlim", [0, pressure(2) + 1])
+    set(subplotA, "xlim", [0, pressure(2) + 1]);
 
     [counts, histx] = imhist(img);
     histx = [0,linspace(pressure(1),pressure(2),255)]'
@@ -989,13 +976,13 @@ case "menu";
     base.batchSettings.batchSkip = skip;
 
     countsTrunc = counts;
-    countsTrunc(1:skip) = 0
+    countsTrunc(1:skip) = 0;
     I = bar(histx,countsTrunc,'hist');
     set(I,"cdata",histx,"linestyle","none");
     set(subplotA,"xlabel",units,"ylabel","instances","xlim", [0, pressure(2) + 1]);
     table = vertcat( {"NaN", getappdata(displayspace,"fname");getappdata(displayspace,"genUnits"), "instances"}, num2cell(horzcat(histx,counts)));
     base.batchTable = table;
-    C = ["batchSubPlot_",num2str(tagNum)]
+    C = ["batchSubPlot_",num2str(tagNum)];
     base.(C).type = "colorHistogram";
     setappdata(displayspace, ["I_", num2str(tagNum)],  I, "base", base);
     setappdata(displayspace, "table",table);
@@ -1014,7 +1001,7 @@ case "menu";
     C = ["batchSubPlot_",num2str(tagNum)];
     base.(C).type = "surfaceMap";
     eval(["surfmap_",num2str(tagNum)," = surf(columns(imvalues):-1:1,\
-    1:rows(imvalues),imvalues,""linestyle"",""none"");"])
+    1:rows(imvalues),imvalues,""linestyle"",""none"");"]);
 
     eval(["setappdata(displayspace, ""base"", base, \
     [""surfmap_"", num2str(tagNum)], ", ["surfmap_", num2str(tagNum)],");"]);
@@ -1038,17 +1025,13 @@ switch isappdata(displayspace, ["clrbar_",num2str(tagNum)])
       base.(C).batchColorbar = 1;
     endif
     eval(["setappdata(displayspace, [""clrbar_"", num2str(tagNum)], ", ["clrbar_", num2str(tagNum)],");"]);
-    disp("data set");
   case true
     cbarHandle = getappdata(displayspace,["clrbar_",num2str(tagNum)])
-    disp(["clrbar_",num2str(tagNum)," = getappdata(displayspace, [""clrbar_"",num2str(tagNum)]);"])
-    eval(["clrbar_",num2str(tagNum)," = getappdata(displayspace, [""clrbar_"",num2str(tagNum)]);"])
+     eval(["clrbar_",num2str(tagNum)," = getappdata(displayspace, [""clrbar_"",num2str(tagNum)]);"])
     rmappdata(displayspace,["clrbar_",num2str(tagNum)]);
     if ishandle(cbarHandle) == true
-      disp(["delete(clrbar_",num2str(tagNum),");"]);
       delete(cbarHandle);
-      disp("data deleted");
-    endif
+     endif
     base.(C).batchColorbar = 0;
 endswitch
 setappdata(displayspace, "base", base);
@@ -1065,16 +1048,16 @@ case "batch"
   base.batchSettings.batchprocess = get(calledBy, "value");
   setappdata(displayspace, "batchProcess", calledBy, "base",base);
 case "run"
-  exportImage = getappdata(displayspace, "exportImage")
-  expimg = get(getappdata(displayspace, "exportImage"), "value")
-  exptab = get(getappdata(displayspace, "exportTable"), "value")
-  expbat = get(getappdata(displayspace, "batchProcess"), "value")
-  table = getappdata(displayspace, "table")
-  fname = getappdata(displayspace, "fname")
-  fpath = getappdata(displayspace, "fpath")
+  exportImage = getappdata(displayspace, "exportImage");
+  expimg = get(getappdata(displayspace, "exportImage"), "value");
+  exptab = get(getappdata(displayspace, "exportTable"), "value");
+  expbat = get(getappdata(displayspace, "batchProcess"), "value");
+  table = getappdata(displayspace, "table");
+  fname = getappdata(displayspace, "fname");
+  fpath = getappdata(displayspace, "fpath");
   base = getappdata(displayspace, "base");
-  [dir, name, ext] = fileparts ([fpath,fname])
-  units = getappdata(displayspace, "genUnits")
+  [dir, name, ext] = fileparts ([fpath,fname]);
+  units = getappdata(displayspace, "genUnits");
 
 
   if expbat == 1
@@ -1123,7 +1106,7 @@ case "run"
         inLoc = uigetdir (pwd,"Select input folder");
 
       elseif strcmp(btn, ["Output Folder"])
-        outLoc = uigetdir (pwd,"Select output folder")
+        outLoc = uigetdir (pwd,"Select output folder");
         setappdata(displayspace, "outLoc", outLoc);
 
       else
@@ -1133,12 +1116,12 @@ case "run"
 
 
     endwhile
-    btn = questdlg (dialogue, "Batch Processing", "RUN PROCESS", "CANCEL", "CANCEL")
+    btn = questdlg (dialogue, "Batch Processing", "RUN PROCESS", "CANCEL", "CANCEL");
 
     sze = get(0,"screensize");
     sze = [(0.5*(sze(3)-(sze(3)*0.95))) ,(0.5*(sze(4)-(sze(4)*0.95))) ,sze(3)*0.95 ,sze(4)*0.95];
 
-    list = fullfile(inLoc,readdir(inLoc))
+    list = fullfile(inLoc,readdir(inLoc));
     A = cell(length(list),length(extensions));
     for i = 1:length(extensions)
       A(:,i) = strfind(lower(list),extensions{i});
@@ -1147,12 +1130,12 @@ case "run"
     indx = rem(indx,length(list));
     indx(indx == 0) = length(list);
     files = cell(length(indx),1);
-    files(1:end) = list(indx(1:end))
+    files(1:end) = list(indx(1:end));
     h = waitbar (0, 'processing...');
     timeElapsed = zeros(length(files));
-    outside = tic()
+    outside = tic();
     for ii = 1:length(files)
-      inside = tic()
+      inside = tic();
       [dir,name,ext] = fileparts(files{ii});
       waitbar (ii/(length(files)), h, [num2str(ii),"/",num2str(length(files)),"\n Processing: ",name,ext,]);
       tempFigure = figure("filename", name,
@@ -1192,7 +1175,7 @@ case "run"
       if v != 1
 
         if exist("imgdown","var")
-          clear("imgdown")
+          clear("imgdown");
         endif
 
         for i = 1:size(img,3)
@@ -1216,17 +1199,17 @@ case "run"
       endif
 
       for iii = 1:numPlot
-        subplot(A, B, iii)
+        subplot(A, B, iii);
         C = ["batchSubPlot_",num2str(iii)];
         switch base.(C).type;
           case "image"
             disp(["output ",num2str(ii),
-            ", subplot",num2str(iii),", type: image"])
+            ", subplot",num2str(iii),", type: image"]);
 
             imshow(img);
           case "pressuremap"
             disp(["output ",num2str(ii),
-            ", subplot",num2str(iii),", type: pressuremap"])
+            ", subplot",num2str(iii),", type: pressuremap"]);
 
             imagesc(imvalues);
             axis image
@@ -1247,7 +1230,7 @@ case "run"
           case "histogram"
             disp(["output ",num2str(ii),
             " subplot",num2str(iii),", type: histogram"])
-            subplotA = subplot(A, B, iii)
+            subplotA = subplot(A, B, iii);
             img = imcomplement(img);
             [counts, histx] = imhist(img);
             histx = [0,linspace(base.batchSettings.batchPressure(1),base.batchSettings.batchPressure(2),255)]';
@@ -1268,7 +1251,7 @@ case "run"
 
             case"colorHistogram"
             disp(["output ",num2str(ii),
-            " subplot",num2str(iii),", type: color histogram"])
+            " subplot",num2str(iii),", type: color histogram"]);
             subplotA = subplot(A, B, iii);
             img = imcomplement(img);
             units = base.batchSettings.batchUnits;
@@ -1312,16 +1295,16 @@ case "run"
         table);
 
       endif
-      delete(tempFigure)
+      delete(tempFigure);
       disp("tempFigure deleted")
       timeElapsed(ii) = toc(inside);
     endfor
-    doubleCheckTiming = toc(outside)
+    doubleCheckTiming = toc(outside);
     delete(h)
     [minval, minID] = min(timeElapsed);
-    [~,minName,minExt] = fileparts(files{minID})
+    [~,minName,minExt] = fileparts(files{minID});
     [maxval, maxID] = max(timeElapsed);
-    [~,maxName,maxExt] = fileparts(files{maxID})
+    [~,maxName,maxExt] = fileparts(files{maxID});
     statsBox = msgbox(["Number of files processed: ",num2str(length(files)),"\n\
 \n\
 Total time elapsed (inside for): ",sprintf("%.1f",sum(timeElapsed))," seconds \n\
@@ -1332,7 +1315,7 @@ average time per file: ",sprintf("%.1f",mean(timeElapsed))," seconds \n\
 \n\
 shortest time and file: ", sprintf("%.1f",minval)," seconds; ", minName, minExt,"\n\
 \n\
-longest time and file: ", sprintf("%.1f",maxval)," seconds; ", maxName, maxExt,])
+longest time and file: ", sprintf("%.1f",maxval)," seconds; ", maxName, maxExt,]);
 
   endif
 
@@ -1456,10 +1439,30 @@ workflow is as follows: \n\
 This software was written by Patrick Grider <patrickgrider@gmail.com>")
 set(helptext2,"position", [0.25 0.5 0.75 0], "string", " ")
     case 3
-set(helptext1, "string", " ")
+set(helptext1, "string", "")
 set(helptext2, "string", " ")
     case 4
-set(helptext1, "string", " ")
+set(helptext1, "string", "\
+Loading images\n\
+-----------------\n\
+The images you load into possum can have the file extensions:\n\
+.bmp\n\
+.gif\n\
+.jpg\n\
+.jpeg\n\
+.pbm\n\
+.pcx\n\
+.pgm\n\
+.png\n\
+.pnm\n\
+.ppm\n\
+.ras\n\
+.tif\n\
+.tiff\n\
+.xwd\n\
+\n\
+if your image has a different filetype, convert it to one of the above types \n\
+with an image editing program.")
 set(helptext2, "string", " ")
     case 5
     set(helptext1,"position", [0.25 0.5 0.75 0.5],
@@ -1505,7 +1508,7 @@ DECOLORIZE: click ""decolorize if you have uploaded a color image to POSSM.\n\
 POSSM can only analyze black and white images, and your pressure-film images\n\
 are likely in color. POSSM is designed to analyze 2 dimensional grayscale matrices of \n\
 values from 0 to 255, each matrix value representing one image pixel. Standard \n\
-color images are typically saved as RGB matrices, 3 dimensional matrices of \n\
+color images are typically saved as RGB matrices, 3 dimentional matrices of \n\
 values 0 to 255. They can also be thought of as three matrices stacked on top of \n\
 one another, each the size of the image; one matrix representing Red values, \n\
 another representing Green, and the last representing Blue, e.g. \n\
@@ -1540,10 +1543,39 @@ and cons.\n\
    and can be useful for batch processing large image sets.")
 set(helptext2,"position", [0.25 0 0.75 0], "string", " ")
 case 7
-set(helptext1, "string", " ")
+set(helptext1, "string", "\
+Units and film type\n\
+--------------------\n\
+POSSM currently can export results exclusively in kPa and psi. If you need to \n\
+change this by adding another unit type, you will have to add it to the uicontrols \n\
+named filmType near lines 593 and 644, and add it to the case ""units"" statement\n\
+near line 745. POSSM uses psi as its base value, and multiplies by 6.89 to get kPa.\n\
+\n\
+The currently coded film types are Fujifilm Prescale Ultra Super Low (abbreviated as Ultra Low)\n\
+Extreme Low, and Ultra Extreme Low, and custom. If you need to add another specific film type, you \n\
+will have to add it to the uicontrols named filmType near lines 581 and 632, \n\
+and to the case ""film"" statement near line 715.\n\
+\n\
+Custom film type asks for a maximum registration pressure and a minimum \n\
+registration pressure. these must be entered in psi.")
 set(helptext2, "string", " ")
 case 8
-set(helptext1, "string", " ")
+set(helptext1, "string", "\
+2D Pressure maps\n\
+------------------\n\
+The 2D pressure map is just a colormap applied to your uploaded image, with your\n\
+image adjusted for film type and unit type. If you find that, after adding a \n\
+different type of graphic, that your color bar is now incorrect (white space at \n\
+the top, or only showing part of the desired gradient), try clicking the Apply \n\
+Colorbar button to delete it, and then click it again to re-generate the color bar.\n\
+\n\
+The percent whitespace tick box, when ticked, will display what percentage of your \n\
+image is at zero pressure. if you would like to target a different pressure \n\
+value, you will have to change the boolean value inside the sum(imvalues == 0) \n\
+operation in the if base.(C).batchWhitespace == 1 statement near line 1221 and \n\
+in the case 1 statement near line 906. For instance, if you wanted to display\n\
+the percentage of values equal to or greater than 50 kPa, you would change it to\n\
+sum(imvalues >= 50). Adding this proces to the UI is an implementation goal.")
 set(helptext2, "string", " ")
 case 9
 set(helptext1, "string", " ")
