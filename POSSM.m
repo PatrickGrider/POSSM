@@ -257,7 +257,7 @@ function plot_number(calledBy, data);
   "batchSkip", 1);
 
   switch tag;                                                                   #tag refers to number of subplots to be generated.
-## This section could be trimmed down significantly by
+## FIXME: This section could be trimmed down significantly by
 ## merging all the generations and using just one 
 ## for loop
 
@@ -566,6 +566,7 @@ setappdata(displayspace,
 "exportTable", exportTable,
 "batchProcess", batchProcess);
 
+##FIXME:
 ##this if/else could be slimmed down by creating the uicontrols and then using
 ##the if/else statement to set(uicontrol, "differentParameter", different value)
 if tag == "1"                                                                   #if there is only one subplot, the UI changes somewhat.
