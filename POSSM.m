@@ -257,10 +257,7 @@ function plot_number(calledBy, data);
   "batchSkip", 1);
 
   switch tag;                                                                   #tag refers to number of subplots to be generated.
-## FIXME: This section could be trimmed down significantly by
-## merging all the generations and using just one 
-## for loop
-
+## This section could be trimmed down significantly
 ##if there is only one subplot:
   case "1"
     delete(children);
@@ -566,7 +563,6 @@ setappdata(displayspace,
 "exportTable", exportTable,
 "batchProcess", batchProcess);
 
-##FIXME:
 ##this if/else could be slimmed down by creating the uicontrols and then using
 ##the if/else statement to set(uicontrol, "differentParameter", different value)
 if tag == "1"                                                                   #if there is only one subplot, the UI changes somewhat.
@@ -938,7 +934,7 @@ case "menu";
     histx = [0,linspace(pressure(1),pressure(2),255)]';
     skip = inputdlg("How many bins in the ""white"" range would you \
     like to skip for the histogram? \n 5 recommended.");
-
+tic()
     skip = cell2mat(skip);
     skip = str2num(skip);
     base.batchSettings.batchSkip = skip;
@@ -952,13 +948,14 @@ case "menu";
     ""linestyle"",""none"",""facecolor"",[0 0 0]);"]);
     set(subplotB,"xlabel",units,"ylabel","instances","xlim", [0, pressure(2) + 1]);
     setappdata(displayspace,"base",base);
+T = toc()
+disp(["time taken: " num2str(T) " seconds"])
   case 3;
     if isappdata(displayspace,["whitespacebox_",num2str(tagNum)]);
       whitespacebox = getappdata(displayspace,["whitespacebox_",num2str(tagNum)]);
       rmappdata(displayspace,["whitespacebox_",num2str(tagNum)]);
       delete(whitespacebox);
     endif
-    tic
 
     img = imcomplement(img);
     units = getappdata(displayspace,"genUnits");
@@ -971,7 +968,7 @@ case "menu";
     [counts, histx] = imhist(img);
     histx = [0,linspace(pressure(1),pressure(2),255)]'
     skip = inputdlg("How many bins in the ""white"" range would you like to skip for the histogram? \n 5 recommended.");
-
+tic()
     skip = cell2mat(skip);
     skip = str2num(skip);
     base.batchSettings.batchSkip = skip;
@@ -989,8 +986,8 @@ case "menu";
     setappdata(displayspace, "table",table);
     subcontrol = getappdata(displayspace, ["subcontrol_", num2str(tagNum)]);
 
-
-    disp(["time taken: " num2str(toc) " seconds"]);
+T = toc()
+    disp(["time taken: " num2str(T) " seconds"]);
   case 4
     if isappdata(displayspace,["whitespacebox_",num2str(tagNum)]);
       whitespacebox = getappdata(displayspace,["whitespacebox_",num2str(tagNum)]);
@@ -1257,7 +1254,7 @@ case "run"
             img = imcomplement(img);
             units = base.batchSettings.batchUnits;
             [counts, histx] = imhist(img);
-            histx = [0,linspace(base.batchSettings.batchPressure(1),base.batchSettings.batchPressure(2),255)]'
+            histx = [0,linspace(base.batchSettings.batchPressure(1),base.batchSettings.batchPressure(2),255)]';
             skip = base.batchSettings.batchSkip;
             countsTrunc = counts;
             countsTrunc(1:skip) = 0;
@@ -1303,9 +1300,9 @@ case "run"
     doubleCheckTiming = toc(outside);
     delete(h)
     [minval, minID] = min(timeElapsed);
-    [~,minName,minExt] = fileparts(files{minID});
+#    [~,minName,minExt] = fileparts(files{minID});
     [maxval, maxID] = max(timeElapsed);
-    [~,maxName,maxExt] = fileparts(files{maxID});
+#    [~,maxName,maxExt] = fileparts(files{maxID});
     statsBox = msgbox(["Number of files processed: ",num2str(length(files)),"\n\
 \n\
 Total time elapsed (inside for): ",sprintf("%.1f",sum(timeElapsed))," seconds \n\
@@ -1314,9 +1311,12 @@ Total time elapsed (outside for): ",sprintf("%.1f",doubleCheckTiming)," seconds 
 \n\
 average time per file: ",sprintf("%.1f",mean(timeElapsed))," seconds \n\
 \n\
-shortest time and file: ", sprintf("%.1f",minval)," seconds; ", minName, minExt,"\n\
+shortest time and file: ", sprintf("%.1f",minval)," seconds\n\
 \n\
-longest time and file: ", sprintf("%.1f",maxval)," seconds; ", maxName, maxExt,]);
+longest time and file: ", sprintf("%.1f",maxval)," seconds"]);
+#shortest time and file: ", sprintf("%.1f",minval)," seconds; ", minName, minExt,"\n\
+#\n\
+#longest time and file: ", sprintf("%.1f",maxval)," seconds; ", maxName, maxExt,]);
 
   endif
 
@@ -1579,10 +1579,30 @@ the percentage of values equal to or greater than 50 kPa, you would change it to
 sum(imvalues >= 50). Adding this proces to the UI is an implementation goal.")
 set(helptext2, "string", " ")
 case 9
-set(helptext1, "string", " ")
+set(helptext1, "string", "\
+Color and non-color histograms\n\
+The distinction between color and non color histograms was an important one in \n\
+earlier versions of POSSM, when color was applied through a for loop and by \n\
+turning the histogram inputs into a sparse 256x256 diagonal matrix. This took \n\
+significantly more time to compute, and so batch processes could be sped up by \n\
+selecting black-and-white histograms. Currently, however, color histograms are \n\
+generated by manipulating the cdata properties of the graphic elements, and the \n\
+two kinds of histogram are different cosmetically only. In fact, the option to \n\
+produce a black and white histogram has been removed. If you would like your \n\
+histograms to be in black and white, then near lines 979 and 1262, where the \n\
+histogram parameters are set, change set(I,""cdata"",histx,""linestyle"",""none"")\n\
+to set(I,""facecolor"",[0 0 0],""linestyle"",""none""), where [0 0 0] is the rgb \n\
+color triplet for black.")
 set(helptext2, "string", " ")
 case 10
-set(helptext1, "string", " ")
+set(helptext1, "string", "\
+3D Surface maps\n\
+--------------------------\n\
+POSSM's 3D surface maps are far and away it's most computationally costly process.\n\
+if your batch processes are taking too long, consider removing the surface map, \n\
+or significantly downsampling your image. Optionally, changing surf(columns to \n\
+surfc(columns near line 1001 will produce surface maps with a contour map beneath it,\n\
+although this is even more computationally expensive.")
 set(helptext2, "string", " ")
 case 11
 set(helptext1, "string", " ")
