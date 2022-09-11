@@ -162,7 +162,8 @@ icon(:,:,3) = [190  190  190  190  190  190  190  190  190  190  190  190  190  
 icon = uint8(icon);
 icon = imresize(icon, 2,"box");
 [iconx,iconmap] = rgb2ind(icon);
-box = msgbox ("Welcome to POSSM, Pressure-film Open Source Scanning and Mapping! \n\
+box = msgbox ("Welcome to Pressure-film Open Source Scanning and Mapping, POSSM v1.1! \n\
+\n\
 Copyright (C) 2022 UChicago Argonne, LLC, under GPLv2 \n\
 Written by Patrick Grider, <patrickgrider@gmail.com>.", "POSSM", "custom", iconx, iconmap);
 waitfor(box,"beingdeleted", "on");
