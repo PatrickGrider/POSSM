@@ -5,6 +5,25 @@
 ##Office of Science, Office of Workforce Development for Teachers and Scientists
 ##(WDTS) under the Science Undergraduate Laboratory Internships (SULI) program.
 
+##Copyright © 2022, UChicago Argonne, LLC
+##All Rights Reserved
+##Software Name: Pressure-film Open Source Scanning and Mapping
+##By: Argonne National Laboratory
+##OPEN SOURCE LICENSE
+
+##GNU General Public License version 2
+##The full license can be read at <https://www.gnu.org/licenses/old-licenses/gpl-2.0.html>
+
+##This program is free software; you can redistribute it and/or modify it under the terms
+##of the GNU General Public License as published by the Free Software Foundation; either 
+##version 2 of the License, or (at your option) any later version.
+
+##This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+##without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+##See the GNU General Public License for more details.
+
+
+
 close all
 clc
 clear
@@ -143,7 +162,9 @@ icon(:,:,3) = [190  190  190  190  190  190  190  190  190  190  190  190  190  
 icon = uint8(icon);
 icon = imresize(icon, 2,"box");
 [iconx,iconmap] = rgb2ind(icon);
-box = msgbox ("Welcome to Pressure-film Open Source Scanning and Mapping!", "POSSM", "custom", iconx, iconmap);
+box = msgbox ("Welcome to POSSM, Pressure-film Open Source Scanning and Mapping! \n\
+Copyright (C) 2022 UChicago Argonne, LLC, under GPLv2 \n\
+Written by Patrick Grider, <patrickgrider@gmail.com>.", "POSSM", "custom", iconx, iconmap);
 waitfor(box,"beingdeleted", "on");
 
 ##get the size of the screen, use screen size to determine window size
