@@ -1406,9 +1406,9 @@ function helpme(calledBy, data)
   "Units and Film Type",
   "Pressure Maps",
   "Color and non-color histograms",
-  "3D Surface maps",
-  "Exporting images and tables",
-  "Batch exporting"},
+  "3D Surface maps"}
+#  "Exporting images and tables",
+#  "Batch exporting"},
   "callback", @listclicked)
 
   helptext1 = uicontrol("parent", helpBox,
@@ -1626,12 +1626,12 @@ or significantly downsampling your image. Optionally, changing surf(columns to \
 surfc(columns near line 1001 will produce surface maps with a contour map beneath it,\n\
 although this is even more computationally expensive.")
 set(helptext2, "string", " ")
-case 11
-set(helptext1, "string", " ")
-set(helptext2, "string", " ")
-case 12
-set(helptext1, "string", " ")
-set(helptext2, "string", " ")
+#case 11
+#set(helptext1, "string", " ")
+#set(helptext2, "string", " ")
+#case 12
+#set(helptext1, "string", " ")
+#set(helptext2, "string", " ")
 endswitch
   endfunction
 
