@@ -1406,7 +1406,7 @@ function helpme(calledBy, data)
   "Units and Film Type",
   "Pressure Maps",
   "Color and non-color histograms",
-  "3D Surface maps"}
+  "3D Surface maps"},
 #  "Exporting images and tables",
 #  "Batch exporting"},
   "callback", @listclicked)
